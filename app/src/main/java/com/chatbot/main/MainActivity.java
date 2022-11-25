@@ -9,6 +9,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Gyroscope gyroscope;
     private Accelerometer accelerometer;
+    private MagneticField magneticField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,22 +18,27 @@ public class MainActivity extends AppCompatActivity {
 
         gyroscope = new Gyroscope(this);
         accelerometer = new Accelerometer(this);
+        magneticField = new MagneticField(this);
 
         // on rotation method of gyroscope
+        // on rotation method of gyroscope
         gyroscope.setListener((rx, ry, rz) -> {
-            // set sensor data
-            TextView tv = (TextView) findViewById(R.id.gyro_sensor);
+            // set the color green if the device rotates on positive z axis
+            TextView tv = (TextView) findViewById(R.id.accelerate_sensor);
             tv.setText(getSensorValue("Gyroscope", rx, ry, rz));
         });
 
-        accelerometer.setListener(new Accelerometer.Listener() {
-            //on translation method of accelerometer
-            @Override
-            public void onTranslation(float tx, float ty, float tz) {
-                // set sensor data
-                TextView tv = (TextView) findViewById(R.id.accelerate_sensor);
-                tv.setText(getSensorValue("Accelerometer", tx, ty, tz));
-            }
+        //on translation method of accelerometer
+        accelerometer.setListener((tx, ty, tz) -> {
+            // set sensor data
+            TextView tv = (TextView) findViewById(R.id.accelerate_sensor);
+            tv.setText(getSensorValue("Accelerometer", tx, ty, tz));
+        });
+
+        magneticField.setListener((mx, my, mz) -> {
+            // set sensor data
+            TextView tv = (TextView) findViewById(R.id.magnetic_field);
+            tv.setText(getSensorValue("Magnetic Field", mx, my, mz));
         });
     }
 
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         // this will send notification to
         gyroscope.register();
         accelerometer.register();
+        magneticField.register();
     }
 
     // create on pause method
@@ -54,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         // this will send notification in
         gyroscope.unregister();
         accelerometer.unregister();
+        magneticField.unregister();
     }
 
     private String getSensorValue(String sensorName, float x, float y, float z) {
